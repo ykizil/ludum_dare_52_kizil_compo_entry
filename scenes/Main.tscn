@@ -1,0 +1,137 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://sprites/environment/background.png" type="Texture" id=1]
+[ext_resource path="res://scenes/entity/Karakter.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/entity/Enemy.tscn" type="PackedScene" id=3]
+[ext_resource path="res://scenes/entity/Combine.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scripts/environment/Map.gd" type="Script" id=5]
+[ext_resource path="res://sprites/environment/background_sky.png" type="Texture" id=6]
+[ext_resource path="res://scripts/GlobalUI.gd" type="Script" id=7]
+[ext_resource path="res://scenes/vfx/Kamera.gd" type="Script" id=8]
+[ext_resource path="res://audio/sfx/firtina.wav" type="AudioStream" id=9]
+[ext_resource path="res://themes/deftheme.tres" type="Theme" id=10]
+
+[sub_resource type="ParticlesMaterial" id=2]
+lifetime_randomness = 0.8
+emission_shape = 2
+emission_box_extents = Vector3( 600, 1, 1 )
+flag_disable_z = true
+direction = Vector3( 0, 1, 0 )
+spread = 20.0
+gravity = Vector3( 0, 200, 0 )
+initial_velocity = 400.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 2.0
+scale_random = 0.7
+
+[sub_resource type="Environment" id=1]
+background_mode = 4
+background_energy = 0.0
+ambient_light_energy = 0.0
+glow_levels/5 = false
+glow_intensity = 0.1
+glow_strength = 1.2
+glow_bloom = 0.05
+glow_blend_mode = 0
+
+[node name="Main" type="YSort"]
+script = ExtResource( 5 )
+
+[node name="Enemy" parent="." instance=ExtResource( 3 )]
+position = Vector2( -144, 276 )
+
+[node name="Karakter" parent="." instance=ExtResource( 2 )]
+position = Vector2( 192, 132 )
+
+[node name="Combine" parent="." instance=ExtResource( 4 )]
+position = Vector2( -984, 300 )
+
+[node name="Kamera" type="Camera2D" parent="."]
+position = Vector2( 204, 120 )
+current = true
+script = ExtResource( 8 )
+
+[node name="UI" type="CanvasLayer" parent="Kamera"]
+script = ExtResource( 7 )
+
+[node name="Control" type="Control" parent="Kamera/UI"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 10 )
+
+[node name="Score" type="Label" parent="Kamera/UI/Control"]
+margin_right = 40.0
+margin_bottom = 14.0
+text = "test"
+
+[node name="DeathStuff" type="Control" parent="Kamera/UI/Control"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -20.0
+margin_right = 20.0
+margin_bottom = 20.0
+
+[node name="DeathScore" type="Label" parent="Kamera/UI/Control/DeathStuff"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -152.0
+margin_top = -108.0
+margin_right = -112.0
+margin_bottom = -96.0
+text = "000"
+align = 1
+valign = 1
+
+[node name="Fade" type="ColorRect" parent="Kamera/UI"]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = -504.0
+margin_top = -372.0
+margin_right = -464.0
+margin_bottom = -332.0
+rect_scale = Vector2( 38.5286, 27.0208 )
+color = Color( 0, 0, 0, 1 )
+
+[node name="Rain" type="Particles2D" parent="Kamera"]
+position = Vector2( -12, -336 )
+scale = Vector2( 1, 3 )
+z_index = 20
+amount = 64
+lifetime = 0.5
+process_material = SubResource( 2 )
+
+[node name="Border" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="Border"]
+position = Vector2( 24, 0 )
+polygon = PoolVector2Array( 348, -12, -36, -12, -60, -36, 372, -36, 372, 396, -60, 396, -60, -36, -36, -12, -36, 372, 348, 372 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 1 )
+
+[node name="Background" type="Sprite" parent="."]
+modulate = Color( 0.75, 0.75, 0.75, 1 )
+position = Vector2( -420, -204 )
+scale = Vector2( 1.05, 1.07 )
+z_index = -999
+texture = ExtResource( 1 )
+centered = false
+
+[node name="Sky" type="Sprite" parent="."]
+modulate = Color( 0.74902, 0.74902, 0.74902, 1 )
+position = Vector2( -420, -204 )
+scale = Vector2( 1.05, 1.07 )
+z_index = 10
+texture = ExtResource( 6 )
+centered = false
+
+[node name="BackgroundSFX" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 9 )
+volume_db = 2.0
+autoplay = true
+bus = "Ingame"
